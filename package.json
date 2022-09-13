@@ -1,0 +1,39 @@
+{
+  "name": "k",
+  "version": "0.1.0",
+  "description": "CLI stuff launcher",
+  "main": "dist/cli.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/cli",
+    "build": "./node_modules/.bin/tsc",
+    "eslint": "./node_modules/.bin/eslint ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frenchbread/k.git"
+  },
+  "keywords": [
+    "cli",
+    "laucner"
+  ],
+  "author": "Damir Mustafin <damir.mustafin@protonmail.ch>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/frenchbread/k/issues"
+  },
+  "homepage": "https://github.com/frenchbread/k#readme",
+  "devDependencies": {
+    "@types/clear": "^0.1.2",
+    "@types/prompts": "^2.0.14",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "eslint": "^8.23.1"
+  },
+  "dependencies": {
+    "bson": "^4.7.0",
+    "clear": "^0.1.0",
+    "get-mac-apps": "^1.0.2",
+    "prompts": "^2.4.2",
+    "rocket-store": "^0.10.8"
+  }
+}
