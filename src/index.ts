@@ -26,8 +26,7 @@ class K {
           title: `${thing.name} (${thing.app || thing.cli})`,
           value: thing._id
         })),
-        { title: '+ add', value: 'add' },
-        { title: 'exit', value: 'exit' }
+        { title: '+ add', value: 'add' }
       ],
       suggest: (input, choices) => Promise.resolve(
         choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
@@ -68,7 +67,8 @@ class K {
         name: 'type',
         message: 'select type',
         choices: [
-          { title: 'app', value: 'app'}
+          { title: 'app', value: 'app'},
+          { title: 'cli command', value: 'cli' }
         ]
       },
       {
@@ -79,10 +79,16 @@ class K {
         suggest: (input, choices) => Promise.resolve(
           choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
         )
+      },
+      {
+        type: prev => prev === 'cli' ? 'text' : null,
+        name: 'cli',
+        message: '>',
+        validate: val => val.length ? true : 'cli command can\'t be empty'
       }
     ])
 
-    if (res && res.type === 'app') {
+    if (res && (res.type === 'app' || res.type === 'cli')) {
       await this.store.add(res)
 
       console.log('[info] added')
@@ -94,9 +100,25 @@ class K {
 
     if (thing.type === 'app') {
       exec(`open ${thing.app.replace(/ /g, '\\ ')}`, (err, stdout, stderr) => {
-        console.log(err, stdout, stderr)
+        if (err) {
+          console.log(`exec error: ${err}`)
+          return
+        }
 
         console.log('[info] ok')
+        console.log(stdout)
+        console.log(stderr)
+      })
+    } else if (thing.type === 'cli') {
+      exec(`${thing.cli}`, (err, stdout, stderr) => {
+        if (err) {
+          console.log(`exec error: ${err}`)
+          return
+        }
+
+        console.log('[info] ok')
+        console.log(stdout)
+        console.log(stderr)
       })
     }
   }

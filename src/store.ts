@@ -22,8 +22,6 @@ export default class Store {
       data_storage_area,
       data_format: rs._FORMAT_JSON,
     })
-
-    console.log('db init:', data_storage_area)
   }
 
   async get ({ _id = '*', name = '*' } = {}) {
