@@ -67,19 +67,14 @@ class K {
 
     const res = await prompts([
       {
-        type: 'text',
-        name: 'name',
-        message: 'enter name',
-        validate: val => val.length ? true : 'name can\'t be empty'
-      },
-      {
         type: 'select',
         name: 'type',
         message: 'select type',
         choices: [
           { title: 'app', value: 'app'},
           { title: 'cli command', value: 'cli' }
-        ]
+        ],
+        validate: val => val.length ? true : 'type was not provided'
       },
       {
         type: prev => prev === 'app' ? 'autocomplete' : null,
@@ -88,17 +83,24 @@ class K {
         choices: apps_list,
         suggest: (input, choices) => Promise.resolve(
           choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
-        )
+        ),
+        validate: val => val.length ? true : 'app was not selected'
       },
       {
         type: prev => prev === 'cli' ? 'text' : null,
         name: 'cli',
         message: '>',
-        validate: val => val.length ? true : 'cli command can\'t be empty'
+        validate: val => val.length ? true : 'cli command was not provided'
+      },
+      {
+        type: 'text',
+        name: 'name',
+        message: 'enter name',
+        validate: val => val.length ? true : 'name can\'t be empty'
       }
     ])
 
-    if (res && (res.type === 'app' || res.type === 'cli')) {
+    if (res && ((res.type === 'app' && res.app) || (res.type === 'cli' && res.cli))) {
       await this.store.add(res)
 
       console.log('[info] added')

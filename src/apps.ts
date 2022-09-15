@@ -1,5 +1,5 @@
 import { getApps as get_apps } from 'get-mac-apps'
-import { writeJson as write_json, readJson as read_json, ensureFile as ensure_file } from 'fs-extra'
+import { writeJson as write_json, readJson as read_json, ensureFile as ensure_file, readdir as read_dir } from 'fs-extra'
 import { resolve } from 'node:path'
 
 import Store from './store'
@@ -17,15 +17,40 @@ export default {
   get_apps () {
     return get_apps()
       .then(async (apps: App[]) => {
-        const _apps = apps.map(app => ({
-          title: `${app._name} (${app.path})`,
-          value: app.path
-        }))
+        const panes = await this.get_macos_pref_panes()
+
+        const _apps = apps
+          .map(app => ({
+            title: `${app._name} (${app.path})`,
+            value: app.path
+          }))
+          .reduce((arr: any, curr: any) => {
+            let _arr = arr
+
+            _arr.push(curr)
+
+            if (curr.title.toLowerCase().includes('preferences')) {
+              _arr = _arr.concat(panes)
+            }
+
+            return _arr
+          }, [])
 
         write_json(resolve(Store.get_storage_path(), 'apps'), _apps)
 
         return _apps
       })
+      .catch((err: any) => err)
+  },
+
+  get_macos_pref_panes () {
+    const _path = '/System/Library/PreferencePanes'
+
+    return read_dir(_path)
+      .then((panes: any) => panes.map((pane: any) => ({
+        title: `[pref] ${pane.split('.')[0]} (${resolve(_path, pane)})`,
+        value: resolve(_path, pane)
+      })))
       .catch((err: any) => err)
   },
 
