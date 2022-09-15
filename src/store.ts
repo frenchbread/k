@@ -15,12 +15,14 @@ export interface IThing {
 
 export default class Store {
 
-  async init () {
-    const data_storage_area = path.resolve(__dirname, DB_NAME)
+  static get_storage_path () {
+    return path.resolve(__dirname, DB_NAME)
+  }
 
+  async init () {
     await rs.options({
-      data_storage_area,
-      data_format: rs._FORMAT_JSON,
+      data_storage_area: Store.get_storage_path(),
+      data_format: rs._FORMAT_JSON
     })
   }
 

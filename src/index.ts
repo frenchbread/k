@@ -15,6 +15,8 @@ class K {
   async init () {
     await this.store.init()
 
+    apps.get_apps()
+
     const things = await this.store.get()
 
     const res = await prompts({
@@ -53,7 +55,15 @@ class K {
   }
 
   async show_add () {
-    const apps_list = await apps.get_apps()
+    let apps_list = []
+
+    const apps_cache_exists = await apps.apps_cache_exists()
+
+    if (apps_cache_exists) {
+      apps_list = await apps.get_cached_apps()
+    } else {
+      apps_list = await apps.get_apps()
+    }
 
     const res = await prompts([
       {
@@ -97,6 +107,8 @@ class K {
 
   async run_or_launch_selected (opt: string) {
     const thing = await this.store.get({ _id: opt })
+
+    if (!thing) return
 
     if (thing.type === 'app') {
       exec(`open ${thing.app.replace(/ /g, '\\ ')}`, (err, stdout, stderr) => {

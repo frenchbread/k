@@ -1,4 +1,8 @@
 import { getApps as get_apps } from 'get-mac-apps'
+import { writeJson as write_json, readJson as read_json, ensureFile as ensure_file } from 'fs-extra'
+import { resolve } from 'node:path'
+
+import Store from './store'
 
 interface App {
   _name: string;
@@ -12,10 +16,32 @@ interface App {
 export default {
   get_apps () {
     return get_apps()
-      .then((apps: App[]) => apps.map(app => ({
-        title: `${app._name} (${app.path})`,
-        value: app.path
-      })))
+      .then(async (apps: App[]) => {
+        const _apps = apps.map(app => ({
+          title: `${app._name} (${app.path})`,
+          value: app.path
+        }))
+
+        write_json(resolve(Store.get_storage_path(), 'apps'), _apps)
+
+        return _apps
+      })
       .catch((err: any) => err)
+  },
+
+  get_cached_apps () {
+    return read_json(resolve(Store.get_storage_path(), 'apps'))
+  },
+
+  async apps_cache_exists () {
+    try {
+      await ensure_file(resolve(Store.get_storage_path(), 'apps'))
+
+      return true
+    } catch (err: any) {
+      console.error(err.message)
+      return false
+    }
   }
+
 }
