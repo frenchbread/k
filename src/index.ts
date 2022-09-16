@@ -4,12 +4,28 @@ import { exec } from 'node:child_process'
 import Store, { IThing } from './store'
 import apps from './apps'
 
+interface IChoice {
+  title: string
+  value?: string
+}
+
 class K {
 
   store: any
+  types: {
+    [key: string]: boolean
+  }
 
   constructor () {
     this.store = new Store()
+
+    this.types = {
+      app: true,
+      cli: true,
+      href: true
+    }
+
+
   }
 
   async init () {
@@ -25,7 +41,7 @@ class K {
       message: 'select thing to run',
       choices: [
         ...things.map((thing: IThing) => ({
-          title: `${thing.name} (${thing.app || thing.cli})`,
+          title: `${thing.name} (${thing.app || thing.cli || thing.href})`,
           value: thing._id
         })),
         { title: '+ add', value: 'add' }
@@ -65,46 +81,74 @@ class K {
       apps_list = await apps.get_apps()
     }
 
+    const { type_fields, type_options } = this.get_enabeld_types(apps_list)
+
     const res = await prompts([
       {
         type: 'select',
         name: 'type',
         message: 'select type',
-        choices: [
-          { title: 'app', value: 'app'},
-          { title: 'cli command', value: 'cli' }
-        ],
-        validate: val => val.length ? true : 'type was not provided'
+        choices: type_options,
+        validate: (val: string) => val.length ? true : 'type was not provided'
       },
-      {
-        type: prev => prev === 'app' ? 'autocomplete' : null,
-        name: 'app',
-        message: 'select app',
-        choices: apps_list,
-        suggest: (input, choices) => Promise.resolve(
-          choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
-        ),
-        validate: val => val.length ? true : 'app was not selected'
-      },
-      {
-        type: prev => prev === 'cli' ? 'text' : null,
-        name: 'cli',
-        message: '>',
-        validate: val => val.length ? true : 'cli command was not provided'
-      },
+      ...type_fields,
       {
         type: 'text',
         name: 'name',
         message: 'enter name',
-        validate: val => val.length ? true : 'name can\'t be empty'
+        validate: (val: string) => val.length ? true : 'name can\'t be empty'
       }
     ])
 
-    if (res && ((res.type === 'app' && res.app) || (res.type === 'cli' && res.cli))) {
+    if (res && ((res.type === 'app' && res.app) || (res.type === 'cli' && res.cli) || (res.type === 'href') && res.href)) {
       await this.store.add(res)
 
       console.log('[info] added')
     }
+  }
+
+  get_enabeld_types (apps_list: IChoice[]) {
+    const type_fields = []
+    const type_options = []
+
+    if (this.type_enabled('app')) {
+      type_fields.push({
+        type: (prev: string) => prev === 'app' ? 'autocomplete' : null,
+        name: 'app',
+        message: 'select app',
+        choices: apps_list,
+        suggest: (input: any, choices: IChoice[]) => Promise.resolve(
+          choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
+        ),
+        validate: (val: string) => val.length ? true : 'app was not selected'
+      })
+
+      type_options.push({ title: 'app', value: 'app'})
+    }
+
+    if (this.type_enabled('cli')) {
+      type_fields.push({
+        type: (prev: string) => prev === 'cli' ? 'text' : null,
+        name: 'cli',
+        message: '>',
+        validate: (val: string) => val.length ? true : 'cli command was not provided'
+      })
+
+      type_options.push({ title: 'cli command', value: 'cli' })
+    }
+
+    if (this.type_enabled('href')) {
+      type_fields.push({
+        type: (prev: string) => prev === 'href' ? 'text' : null,
+        name: 'href',
+        message: 'https://...',
+        validate: (val: string) => val.length ? true : 'url link was not provided'
+      })
+
+      type_options.push({ title: 'href', value: 'href' })
+    }
+
+    return { type_fields, type_options }
   }
 
   async run_or_launch_selected (opt: string) {
@@ -134,7 +178,22 @@ class K {
         console.log(stdout)
         console.log(stderr)
       })
+    } else if (thing.type === 'href') {
+      exec(`open ${thing.href}`, (err, stdout, stderr) => {
+        if (err) {
+          console.log(`exec error: ${err}`)
+          return
+        }
+
+        console.log('[info] ok')
+        console.log(stdout)
+        console.log(stderr)
+      })
     }
+  }
+
+  type_enabled (type: string) {
+    return this.types[type] === true
   }
 
 }

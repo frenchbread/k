@@ -8,8 +8,9 @@ export interface IThing {
   _id: string,
   name: string,
   type: string,
-  app: string,
-  cli: string,
+  app?: string,
+  cli?: string,
+  href?: string,
   created_at: number
 }
 
