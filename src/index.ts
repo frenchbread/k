@@ -24,8 +24,6 @@ class K {
       cli: true,
       href: true
     }
-
-
   }
 
   async init () {
@@ -44,7 +42,8 @@ class K {
           title: `${thing.name} (${thing.app || thing.cli || thing.href})`,
           value: thing._id
         })),
-        { title: '+ add', value: 'add' }
+        { title: '+ add', value: 'add' },
+        { title: '- remove', value: 'remove' }
       ],
       suggest: (input, choices) => Promise.resolve(
         choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
@@ -60,6 +59,9 @@ class K {
     switch (opt) {
     case 'add':
       this.show_add()
+      break
+    case 'remove':
+      this.show_remove()
       break
     case 'exit':
       process.exit(0)
@@ -104,6 +106,35 @@ class K {
       await this.store.add(res)
 
       console.log('[info] added')
+    }
+  }
+
+  async show_remove () {
+    const things = await this.store.get()
+
+    const res = await prompts([
+      {
+        type: 'multiselect',
+        name: 'to_remove',
+        message: 'select things to delete',
+        choices: [
+          ...things.map((thing: IThing) => ({
+            title: `${thing.name} (${thing.app || thing.cli || thing.href})`,
+            value: thing._id
+          }))
+        ],
+        suggest: (input, choices) => Promise.resolve(
+          choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
+        )
+      }
+    ])
+
+    if (res.to_remove && res.to_remove.length) {
+      await Promise.all(
+        res.to_remove.map((_id: string) => this.store.remove(_id))
+      )
+
+      console.log(`[info] removed ${res.to_remove.length} thing${res.to_remove.length === 1 ? '' : 's'}`)
     }
   }
 

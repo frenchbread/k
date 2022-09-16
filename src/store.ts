@@ -50,4 +50,10 @@ export default class Store {
 
     return this.get({ _id: data._id, name: data.name })
   }
+
+  async remove (_id: string) {
+    if (!_id) throw new Error('delete requires _id')
+
+    return rs.delete('things', `${_id}-*`)
+  }
 }
