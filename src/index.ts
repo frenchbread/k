@@ -39,7 +39,7 @@ class K {
       message: 'select thing to run',
       choices: [
         ...things.map((thing: IThing) => ({
-          title: `${thing.name} (${thing.app || thing.cli || thing.href})`,
+          title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name} (${thing.app || thing.cli || thing.href})`,
           value: thing._id
         })),
         { title: '+ add', value: 'add' },

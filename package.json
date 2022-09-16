@@ -1,12 +1,16 @@
 {
-  "name": "k",
+  "name": "stuff-launcher",
   "version": "0.1.0",
   "description": "CLI stuff launcher",
   "main": "dist/cli.js",
   "scripts": {
     "start": "npm run build && node ./dist/cli",
     "build": "./node_modules/.bin/tsc",
-    "eslint": "./node_modules/.bin/eslint ./"
+    "eslint": "./node_modules/.bin/eslint ./",
+    "prepublishOnly": "npm run build"
+  },
+  "bin": {
+    "k": "dist/cli.js"
   },
   "repository": {
     "type": "git",
