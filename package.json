@@ -38,6 +38,7 @@
     "clear": "^0.1.0",
     "fs-extra": "^10.1.0",
     "get-mac-apps": "^1.0.2",
+    "meow": "^9.0.0",
     "prompts": "^2.4.2",
     "rocket-store": "^0.10.8"
   }
