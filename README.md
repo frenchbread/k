@@ -6,7 +6,7 @@
 - run shell commands (aka `alias`)
 - open urls (aka `bookmarks`)
 
-### setup
+### ⚙️ setup
 
 ```sh
 # install
@@ -46,7 +46,7 @@ Removing items is done by selecting `- remove` option and multi-selecting items 
 - - remove
 ```
 
-### development
+### 🛠️ development
 
 **clone the repo**
 
