@@ -1,4 +1,4 @@
-### k
+### kl1
 
 > CLI items launcher
 
@@ -10,10 +10,10 @@
 
 ```sh
 # install
-❯ npm i k-one -g
+❯ npm i kl1 -g
 
 # run
-❯ k-one
+❯ kl1
 ```
 
 You can alias it into something shorter e.g. `k`. Or add a workflow (e.g. keybind) that starts terminal sesh (window) with this command.
