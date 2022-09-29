@@ -1,12 +1,12 @@
 {
-  "name": "stuff-launcher",
+  "name": "k-one",
   "version": "0.1.0",
   "description": "CLI stuff launcher",
   "main": "dist/cli.js",
   "scripts": {
     "start": "npm run build && node ./dist/cli",
     "build": "./node_modules/.bin/tsc",
-    "eslint": "./node_modules/.bin/eslint ./",
+    "lint": "./node_modules/.bin/eslint ./",
     "prepublishOnly": "npm run build"
   },
   "bin": {
