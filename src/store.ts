@@ -11,7 +11,8 @@ export interface IThing {
   app?: string,
   cli?: string,
   href?: string,
-  created_at: number
+  created_at: number,
+  run_count: number
 }
 
 export default class Store {
@@ -55,5 +56,15 @@ export default class Store {
     if (!_id) throw new Error('delete requires _id')
 
     return rs.delete('things', `${_id}-*`)
+  }
+
+  async update (_id: string, changes: any) {
+    if (!_id) throw new Error('update requires _id')
+
+    const item = await this.get({ _id })
+
+    await this.remove(_id)
+
+    return this.add({...item, ...changes, updated_at: Date.now()})
   }
 }

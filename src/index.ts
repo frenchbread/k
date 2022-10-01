@@ -38,10 +38,12 @@ class K {
       name: 'selected',
       message: 'select thing to run',
       choices: [
-        ...things.map((thing: IThing) => ({
-          title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name} (${thing.app || thing.cli || thing.href})`,
-          value: thing._id
-        })),
+        ...things
+          .sort((a: IThing, b: IThing) => (b.run_count || 0) - (a.run_count || 0))
+          .map((thing: IThing) => ({
+            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name} (${thing.app || thing.cli || thing.href})`,
+            value: thing._id
+          })),
         { title: '+ add', value: 'add' },
         { title: '- remove', value: 'remove' }
       ],
@@ -184,6 +186,8 @@ class K {
 
   async run_or_launch_selected (opt: string) {
     const thing = await this.store.get({ _id: opt })
+
+    await this.store.update(thing._id, { run_count: thing.run_count ? thing.run_count + 1 : 1 })
 
     if (!thing) return
 

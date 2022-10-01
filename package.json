@@ -10,7 +10,7 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "k": "dist/cli.js"
+    "kl1": "dist/cli.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,12 @@
   },
   "keywords": [
     "cli",
-    "laucner"
+    "laucher",
+    "kl1",
+    "runner",
+    "shell",
+    "bash",
+    "href"
   ],
   "author": "Damir Mustafin <damir.mustafin@protonmail.ch>",
   "license": "MIT",
