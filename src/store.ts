@@ -1,6 +1,6 @@
-import rs from 'rocket-store'
-import path from 'node:path'
 import { ObjectID } from 'bson'
+import path from 'node:path'
+import rs from 'rocket-store'
 
 const DB_NAME = '../store'
 
@@ -17,18 +17,18 @@ export interface IThing {
 
 export default class Store {
 
-  static get_storage_path () {
+  static get_storage_path() {
     return path.resolve(__dirname, DB_NAME)
   }
 
-  async init () {
+  async init() {
     await rs.options({
       data_storage_area: Store.get_storage_path(),
       data_format: rs._FORMAT_JSON
     })
   }
 
-  async get ({ _id = '*', name = '*' } = {}) {
+  async get({ _id = '*', name = '*' } = {}) {
     const { result, count } = await rs.get('things', `${_id}-${name}`)
 
     return count !== 0
@@ -36,7 +36,7 @@ export default class Store {
       : _id === '*' ? [] : null
   }
 
-  async add (data: IThing) {
+  async add(data: IThing) {
     if (!data.name) throw new Error('name is required')
 
     Object.assign(
@@ -52,19 +52,19 @@ export default class Store {
     return this.get({ _id: data._id, name: data.name })
   }
 
-  async remove (_id: string) {
+  async remove(_id: string) {
     if (!_id) throw new Error('delete requires _id')
 
     return rs.delete('things', `${_id}-*`)
   }
 
-  async update (_id: string, changes: any) {
+  async update(_id: string, changes: any) {
     if (!_id) throw new Error('update requires _id')
 
     const item = await this.get({ _id })
 
     await this.remove(_id)
 
-    return this.add({...item, ...changes, updated_at: Date.now()})
+    return this.add({ ...item, ...changes, updated_at: Date.now() })
   }
 }

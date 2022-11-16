@@ -1,8 +1,8 @@
-import prompts from 'prompts'
 import { exec } from 'node:child_process'
+import prompts from 'prompts'
 
-import Store, { IThing } from './store'
 import apps from './apps'
+import Store, { IThing } from './store'
 
 interface IChoice {
   title: string
@@ -16,7 +16,7 @@ class K {
     [key: string]: boolean
   }
 
-  constructor () {
+  constructor() {
     this.store = new Store()
 
     this.types = {
@@ -26,7 +26,7 @@ class K {
     }
   }
 
-  async init () {
+  async init() {
     await this.store.init()
 
     apps.get_apps()
@@ -41,7 +41,7 @@ class K {
         ...things
           .sort((a: IThing, b: IThing) => (b.run_count || 0) - (a.run_count || 0))
           .map((thing: IThing) => ({
-            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name} (${thing.app || thing.cli || thing.href})`,
+            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name}${thing.cli || thing.href ? ` (${thing.cli || thing.href})` : ''}`, // thing.app ||
             value: thing._id
           })),
         { title: '+ add', value: 'add' },
@@ -57,24 +57,23 @@ class K {
     }
   }
 
-  async handle_select (opt: string) {
+  async handle_select(opt: string) {
     switch (opt) {
-    case 'add':
-      this.show_add()
-      break
-    case 'remove':
-      this.show_remove()
-      break
-    case 'exit':
-      process.exit(0)
-      break
-    default:
-      this.run_or_launch_selected(opt)
-      break
+      case 'add':
+        this.show_add()
+        break
+      case 'remove':
+        this.show_remove()
+        break
+      case 'exit':
+        process.exit(0)
+      default:
+        this.run_or_launch_selected(opt)
+        break
     }
   }
 
-  async show_add () {
+  async show_add() {
     let apps_list = []
 
     const apps_cache_exists = await apps.apps_cache_exists()
@@ -111,7 +110,7 @@ class K {
     }
   }
 
-  async show_remove () {
+  async show_remove() {
     const things = await this.store.get()
 
     const res = await prompts([
@@ -140,7 +139,7 @@ class K {
     }
   }
 
-  get_enabeld_types (apps_list: IChoice[]) {
+  get_enabeld_types(apps_list: IChoice[]) {
     const type_fields = []
     const type_options = []
 
@@ -156,7 +155,7 @@ class K {
         validate: (val: string) => val.length ? true : 'app was not selected'
       })
 
-      type_options.push({ title: 'app', value: 'app'})
+      type_options.push({ title: 'app', value: 'app' })
     }
 
     if (this.type_enabled('cli')) {
@@ -184,7 +183,7 @@ class K {
     return { type_fields, type_options }
   }
 
-  async run_or_launch_selected (opt: string) {
+  async run_or_launch_selected(opt: string) {
     const thing = await this.store.get({ _id: opt })
 
     await this.store.update(thing._id, { run_count: thing.run_count ? thing.run_count + 1 : 1 })
@@ -227,7 +226,7 @@ class K {
     }
   }
 
-  type_enabled (type: string) {
+  type_enabled(type: string) {
     return this.types[type] === true
   }
 
