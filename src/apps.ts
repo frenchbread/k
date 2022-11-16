@@ -1,4 +1,4 @@
-import { ensureFile as ensure_file, readJson as read_json, writeJson as write_json, readDir as read_dir } from 'fs-extra'
+import { ensureFile as ensure_file, readJson as read_json, writeJson as write_json } from 'fs-extra'
 import { getApps as get_apps } from 'get-mac-apps'
 import { resolve } from 'node:path'
 
