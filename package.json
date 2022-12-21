@@ -1,6 +1,6 @@
 {
   "name": "kl1",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "CLI stuff launcher",
   "main": "dist/cli.js",
   "scripts": {
