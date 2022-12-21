@@ -3,6 +3,7 @@ import prompts from 'prompts'
 
 import apps from './apps'
 import Store, { IThing } from './store'
+import { update as update_prefs, get as get_pref } from './prefs'
 
 interface IChoice {
   title: string
@@ -33,6 +34,8 @@ class K {
 
     const things = await this.store.get()
 
+    const show_launches_count = await get_pref('launches_count')
+
     const res = await prompts({
       type: 'autocomplete',
       name: 'selected',
@@ -41,11 +44,12 @@ class K {
         ...things
           .sort((a: IThing, b: IThing) => (b.run_count || 0) - (a.run_count || 0))
           .map((thing: IThing) => ({
-            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name}${thing.cli || thing.href ? ` (${thing.cli || thing.href})` : ''}`, // thing.app ||
+            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name}${thing.cli || thing.href ? ` (${thing.cli || thing.href})` : ''}${show_launches_count ? ` (${thing.run_count}})` : ''}`, // thing.app ||
             value: thing._id
           })),
         { title: '+ add', value: 'add' },
-        { title: '- remove', value: 'remove' }
+        { title: '- remove', value: 'remove' },
+        { title: '⚙ settings', value: 'settings' }
       ],
       suggest: (input, choices) => Promise.resolve(
         choices.filter(({ title }) => title.toLowerCase().includes(input.toLowerCase()))
@@ -64,6 +68,9 @@ class K {
         break
       case 'remove':
         this.show_remove()
+        break
+      case 'settings':
+        this.show_settings()
         break
       case 'exit':
         process.exit(0)
@@ -137,6 +144,21 @@ class K {
 
       console.log(`[info] removed ${res.to_remove.length} thing${res.to_remove.length === 1 ? '' : 's'}`)
     }
+  }
+
+  async show_settings() {
+    const launches_count = await get_pref('launches_count')
+
+    const res = await prompts([
+      {
+        type: 'toggle',
+        name: 'launches_count',
+        message: 'show launches/calls count in list',
+        ...(launches_count ? { initial: launches_count } : {})
+      }
+    ])
+
+    await update_prefs(res)
   }
 
   get_enabeld_types(apps_list: IChoice[]) {
