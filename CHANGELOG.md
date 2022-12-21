@@ -1,6 +1,12 @@
 CHANGELOG
 ===
 
+### `v0.3.1`
+
+#### new
+
+- added setting to toggle visiblily of launches count
+
 ### `v0.3.0`
 
 #### added support for macOs Ventura
