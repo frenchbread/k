@@ -44,7 +44,7 @@ class K {
         ...things
           .sort((a: IThing, b: IThing) => (b.run_count || 0) - (a.run_count || 0))
           .map((thing: IThing) => ({
-            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name}${thing.cli || thing.href ? ` (${thing.cli || thing.href})` : ''}${show_launches_count ? ` (${thing.run_count}})` : ''}`, // thing.app ||
+            title: `[${thing.app ? 'app' : thing.cli ? 'cli' : thing.href ? 'href' : '?'}] ${thing.name}${thing.cli || thing.href ? ` (${thing.cli || thing.href})` : ''}${show_launches_count ? ` (${thing.run_count})` : ''}`, // thing.app ||
             value: thing._id
           })),
         { title: '+ add', value: 'add' },
@@ -63,20 +63,21 @@ class K {
 
   async handle_select(opt: string) {
     switch (opt) {
-      case 'add':
-        this.show_add()
-        break
-      case 'remove':
-        this.show_remove()
-        break
-      case 'settings':
-        this.show_settings()
-        break
-      case 'exit':
-        process.exit(0)
-      default:
-        this.run_or_launch_selected(opt)
-        break
+    case 'add':
+      this.show_add()
+      break
+    case 'remove':
+      this.show_remove()
+      break
+    case 'settings':
+      this.show_settings()
+      break
+    case 'exit':
+      process.exit(0)
+      break
+    default:
+      this.run_or_launch_selected(opt)
+      break
     }
   }
 

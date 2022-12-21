@@ -5,7 +5,7 @@ CHANGELOG
 
 #### new
 
-- added setting to toggle visiblily of launches count
+- added setting to toggle visibility of launches count
 
 ### `v0.3.0`
 

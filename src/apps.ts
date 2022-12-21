@@ -23,7 +23,7 @@ export default {
             value: app.path
           }))
           .reduce((arr: any, curr: any) => {
-            let _arr = arr
+            const _arr = arr
 
             _arr.push(curr)
 

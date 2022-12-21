@@ -33,10 +33,12 @@
   "homepage": "https://github.com/frenchbread/k#readme",
   "devDependencies": {
     "@types/clear": "^0.1.2",
+    "@types/node": "^18.11.17",
     "@types/prompts": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
-    "eslint": "^8.23.1"
+    "eslint": "^8.23.1",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "bson": "^4.7.0",
